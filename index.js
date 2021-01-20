@@ -1,4 +1,4 @@
-import Vue from 'https://unpkg.com/vue@next'
+import {createApp} from './services.js'
 
 
-document.body.appendChild(document.createTextNode(typeof Vue))
+document.body.appendChild(document.createTextNode(typeof createApp))
