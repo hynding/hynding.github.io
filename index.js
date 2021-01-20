@@ -1,1 +1,4 @@
-document.body.appendChild(document.createTextNode('Hy'))
+import Vue from 'https://unpkg.com/vue@next'
+
+
+document.body.appendChild(document.createTextNode(typeof Vue))
