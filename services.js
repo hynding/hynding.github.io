@@ -10,5 +10,13 @@ export const requestPut = axios.put
 export const requestDelete = axios.delete
 
 export const render = (...args) = {
-  if (args.length && isArray(args[0]))
+  const [el, ...children] 
+  
+  return Vue.h.call(null, el, ...children)
+  
+  return args.map(arg => {
+      return isArray(arg)
+        ? render.apply(null, arg)
+        : Vue.h
+  })
 }
