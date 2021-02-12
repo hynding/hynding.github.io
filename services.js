@@ -2,7 +2,9 @@ export const isArray = Array.isArray
 export const isObject = value => typeof value === 'object'
 
 
-export const createApp = Vue.createApp
+export const createApp = Vue 
+  ? Vue.createApp
+  : () => {}
 
 export const requestGet = axios.get
 export const requestPost = axios.post
