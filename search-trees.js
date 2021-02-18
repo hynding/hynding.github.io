@@ -20,6 +20,9 @@ const createSearchTree = options => {
     indices, // sort order array of col indices
   } = options
   
-  sort(rows).by(indices).reduce(toTree, [])
+  const sortedRows = sort(rows).by(indices)
+  
+  Math.ceil(sortedRows.length/2)
+  
   
 }
