@@ -1,0 +1,46 @@
+basics:
+  name: Steve Hynding
+  role: Full-stack Engineer / UX Specialist
+  website: https://hynding.github.io
+  image: steve-hynding-profile.png
+  profile:
+    summary: Experienced full-stack engineer with a strong background in UX design.
+    skills:
+      - Node.js
+      - React
+      - TypeScript
+      - HTML
+      - CSS
+      - AWS
+      - Python
+      - Vue
+      - Angular
+      - D3
+      - Material UI
+      - Tailwind
+      - Cucumber
+      - Selenium
+  work:
+    experience:
+      - company: Boston Consulting Group
+        position: Lead Engineer (Full-stack)
+        duration: April 2016 - Present
+        responsibilities:
+          - Worked with partners and clients to develop a wide variety of software solutions from innovation prototypes through to production.
+          - Engineered and integrated full-stack solutions for content management systems, analytics charting, IoT and AI training interfaces.
+          - Teamed with designers and product managers to build responsive, test-driven web applications.
+        technologies:
+          - Node.js
+          - React
+          - TypeScript
+          - HTML
+          - CSS
+          - AWS
+          - Python
+          - Vue
+          - Angular
+          - D3
+          - Material UI
+          - Tailwind
+          - Cucumber
+          - Selenium
