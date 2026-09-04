@@ -2751,7 +2751,89 @@ test("emits absolute share metadata, never localhost", async ({ request }) => {
 Run: `npm run test:e2e`
 Expected: PASS, 8 tests.
 
-- [ ] **Step 3: Write the workflow**
+- [ ] **Step 3: Write the leak guard**
+
+`scripts/check-no-leak.ts`:
+
+```typescript
+import fs from "node:fs"
+import path from "node:path"
+import yaml from "js-yaml"
+
+const OUT = path.join(process.cwd(), "out")
+const PRIVATE = path.join(process.cwd(), "data", "resume.private.yaml")
+
+interface Secret {
+  path: string
+  value: string
+}
+
+/**
+ * Every string worth checking. Values shorter than six characters produce
+ * false positives against ordinary page text.
+ */
+function collect(node: unknown, trail: string[] = [], into: Secret[] = []): Secret[] {
+  if (typeof node === "string") {
+    const value = node.trim()
+    if (value.length >= 6) into.push({ path: trail.join(".") || "(root)", value })
+  } else if (Array.isArray(node)) {
+    node.forEach((item, index) => collect(item, [...trail, String(index)], into))
+  } else if (node && typeof node === "object") {
+    for (const [key, value] of Object.entries(node)) collect(value, [...trail, key], into)
+  }
+  return into
+}
+
+function readAll(dir: string): string {
+  let text = ""
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name)
+    text += entry.isDirectory() ? readAll(full) : fs.readFileSync(full, "utf8")
+  }
+  return text
+}
+
+if (!fs.existsSync(PRIVATE)) {
+  console.log("[leak-check] no private data in this build; nothing to check")
+  process.exit(0)
+}
+
+if (!fs.existsSync(OUT)) {
+  console.error("[leak-check] out/ does not exist — did the build run?")
+  process.exit(1)
+}
+
+const secrets = collect(yaml.load(fs.readFileSync(PRIVATE, "utf8")))
+const haystack = readAll(OUT)
+
+// Report the PATH, never the value. A CI log is not a secret store, and a
+// guard that prints what leaked would leak it a second time.
+const leaked = secrets.filter((secret) => haystack.includes(secret.value)).map((s) => s.path)
+
+if (leaked.length > 0) {
+  console.error(`[leak-check] private values present in out/: ${leaked.join(", ")}`)
+  process.exit(1)
+}
+
+console.log(`[leak-check] ${secrets.length} private values checked, none present in out/`)
+```
+
+Verify it both ways before trusting it:
+
+```bash
+npx tsx scripts/check-no-leak.ts                      # no private file: exits 0 with a notice
+npm run build:e2e && VAULT_PRIVATE_FILE=$PWD/tests/fixtures/resume.private.yaml \
+  cp tests/fixtures/resume.private.yaml data/resume.private.yaml \
+  && npx tsx scripts/check-no-leak.ts                 # real file, real build: must pass
+echo "steve.hynding@example.com" >> out/index.html \
+  && npx tsx scripts/check-no-leak.ts; echo "exit=$?"  # must FAIL with exit 1
+rm -f data/resume.private.yaml && npm run build       # clean up
+```
+
+The third command is the one that matters: a guard nobody has watched fail is
+not a guard.
+
+- [ ] **Step 4: Write the workflow**
 
 `.github/workflows/deploy.yml`:
 
@@ -2809,11 +2891,8 @@ jobs:
       # the build log, so it is re-created here.
       - run: touch out/.nojekyll
 
-      - name: Fail if a secret leaked into the output
-        run: |
-          if grep -rq "$(printf 'BEGIN PRIVATE')" out 2>/dev/null; then
-            echo "private material found in build output"; exit 1
-          fi
+      - name: Fail if any private value reached the build output
+        run: npx tsx scripts/check-no-leak.ts
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -2830,7 +2909,7 @@ jobs:
         uses: actions/deploy-pages@v4
 ```
 
-- [ ] **Step 4: Generate passphrases and record the manual setup**
+- [ ] **Step 5: Generate passphrases and record the manual setup**
 
 Run: `npm run vault:init recruiter` and `npm run vault:init full`
 
@@ -2844,19 +2923,26 @@ Store each printed passphrase, then set these repository secrets under **Setting
 
 Then set **Settings → Pages → Source** to **GitHub Actions**.
 
-- [ ] **Step 5: Merge to master and verify the deploy**
+- [ ] **Step 6: Commit, and hand the merge to the repository owner**
 
 ```bash
-git add .github app/layout.tsx public/og.png tests/e2e/resume.spec.ts
+git add .github app/layout.tsx public/og.png scripts/check-no-leak.ts tests/
 git commit -m "ci: build and deploy the static export to GitHub Pages
 
 Sets metadataBase so share metadata resolves absolutely rather than to
 localhost, and guards .nojekyll, without which Jekyll discards _next/ and the
 site deploys successfully as an unstyled wall of text."
-git checkout master && git merge --no-ff nextjs-refactor && git push origin master
 ```
 
-Then confirm at `https://hynding.github.io`: the resume renders styled (not a wall of unstyled text — that symptom means `.nojekyll` did not take), sensitive fields read "Available on request", and a `#k=recruiter.<passphrase>` link reveals them.
+**Stop at the commit.** Merging `nextjs-refactor` into `master` and pushing is
+a side effect outside this branch — it publishes the site — and belongs to the
+repository owner, not to the process. Present the branch as ready; let them
+run the merge.
+
+Once they have merged and the workflow has run, confirm at
+`https://hynding.github.io`: the resume renders styled (a wall of unstyled text
+means `.nojekyll` did not take), sensitive fields read "Available on request",
+and a `#k=recruiter.<passphrase>` link reveals them.
 
 ---
 
