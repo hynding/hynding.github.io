@@ -12,6 +12,7 @@ interface ResumeContextValue {
   unlocked: boolean
   unlock: (passphrase: string, audience?: string) => Promise<void>
   lock: () => void
+  linkError: string | null
 }
 
 const ResumeContext = createContext<ResumeContextValue | null>(null)
@@ -38,6 +39,7 @@ export function ResumeProvider({
   children: React.ReactNode
 }) {
   const [patch, setPatch] = useState<unknown>(null)
+  const [linkError, setLinkError] = useState<string | null>(null)
 
   /** Merge then validate: a partial patch cannot be validated on its own. */
   const applyPatch = useCallback(
@@ -76,6 +78,7 @@ export function ResumeProvider({
         throw new Error("That link is out of date — ask for a new one.")
       }
 
+      setLinkError(null)
       setPatch(opened)
       try {
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify(opened))
@@ -88,6 +91,7 @@ export function ResumeProvider({
 
   const lock = useCallback(() => {
     setPatch(null)
+    setLinkError(null)
     try {
       sessionStorage.removeItem(STORAGE_KEY)
     } catch {
@@ -104,7 +108,19 @@ export function ResumeProvider({
       // Strip before awaiting so the passphrase never lingers in the address
       // bar or in history, even if decryption is slow or fails.
       history.replaceState(null, "", window.location.pathname + window.location.search)
-      void unlock(decodeURIComponent(match[2]), decodeURIComponent(match[1])).catch(() => {})
+
+      const audience = decodeURIComponent(match[1])
+      // Only ever fetch an audience this build actually published. The regex
+      // above runs on the still-encoded fragment, so a percent-encoded ".."
+      // would otherwise survive into the fetch path after decoding.
+      if (!audiences.includes(audience)) {
+        setLinkError("That link did not work — ask for a new one.")
+        return
+      }
+
+      void unlock(decodeURIComponent(match[2]), audience).catch((caught) => {
+        setLinkError(caught instanceof Error ? caught.message : "That link did not work.")
+      })
       return
     }
 
@@ -122,7 +138,7 @@ export function ResumeProvider({
         // Nothing to clear.
       }
     }
-  }, [applyPatch, unlock])
+  }, [applyPatch, audiences, unlock])
 
   const value = useMemo<ResumeContextValue>(() => {
     let merged = resume
@@ -133,8 +149,8 @@ export function ResumeProvider({
         merged = resume
       }
     }
-    return { resume: merged, unlocked: patch !== null, unlock, lock }
-  }, [applyPatch, lock, patch, resume, unlock])
+    return { resume: merged, unlocked: patch !== null, unlock, lock, linkError }
+  }, [applyPatch, linkError, lock, patch, resume, unlock])
 
   return <ResumeContext.Provider value={value}>{children}</ResumeContext.Provider>
 }

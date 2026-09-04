@@ -4,10 +4,11 @@ import { useState } from "react"
 import { useResume } from "@/components/shell/ResumeProvider"
 
 export function UnlockControl() {
-  const { unlocked, unlock, lock } = useResume()
+  const { unlocked, unlock, lock, linkError } = useResume()
   const [passphrase, setPassphrase] = useState("")
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const shown = error ?? linkError
 
   if (unlocked) {
     return (
@@ -54,9 +55,9 @@ export function UnlockControl() {
       >
         {pending ? "Unlocking…" : "Unlock"}
       </button>
-      {error ? (
+      {shown ? (
         <span role="alert" className="text-[var(--muted)]">
-          {error}
+          {shown}
         </span>
       ) : null}
     </form>
