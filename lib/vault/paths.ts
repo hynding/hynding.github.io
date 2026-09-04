@@ -49,6 +49,22 @@ export function setAtPath(
   path: Segment[],
   value: unknown,
 ): void {
+  // A path must begin and end with an object key. The walk below consumes id
+  // segments as lookaheads from a preceding string key, so an id in either
+  // terminal position is not merely unsupported — it silently writes nothing,
+  // or writes to the root instead of into the array entry. Fail loudly.
+  if (path.length === 0) {
+    throw new Error("setAtPath: path must not be empty")
+  }
+  const first = path[0]
+  const final = path[path.length - 1]
+  if (typeof first !== "string") {
+    throw new Error(`setAtPath: path must start with an object key, received ${JSON.stringify(first)}`)
+  }
+  if (typeof final !== "string") {
+    throw new Error(`setAtPath: path must end with an object key, received ${JSON.stringify(final)}`)
+  }
+
   let container: Record<string, unknown> = root
 
   for (let index = 0; index < path.length - 1; index += 1) {
@@ -78,6 +94,5 @@ export function setAtPath(
     }
   }
 
-  const last = path[path.length - 1]
-  if (typeof last === "string") container[last] = value
+  container[final] = value
 }

@@ -67,4 +67,24 @@ describe("setAtPath", () => {
     setAtPath(out, ["references"], [{ id: "a", name: "A" }])
     expect(out).toEqual({ references: [{ id: "a", name: "A" }] })
   })
+
+  it("walks two levels of array nesting", () => {
+    const out = {}
+    setAtPath(out, ["projects", { id: "p1" }, "outcomes", { id: "o1" }, "value"], "40 countries")
+    expect(out).toEqual({
+      projects: [{ id: "p1", outcomes: [{ id: "o1", value: "40 countries" }] }],
+    })
+  })
+
+  it("throws rather than silently dropping a value when the path ends with an id", () => {
+    expect(() => setAtPath({}, ["work", { id: "acme" }], { company: "Acme" })).toThrow(/end with/)
+  })
+
+  it("throws rather than writing to the root when the path starts with an id", () => {
+    expect(() => setAtPath({}, [{ id: "x" }, "a"], 1)).toThrow(/start with/)
+  })
+
+  it("throws on an empty path", () => {
+    expect(() => setAtPath({}, [], 1)).toThrow(/empty/)
+  })
 })
