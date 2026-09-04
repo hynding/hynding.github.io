@@ -1244,6 +1244,26 @@ describe("setAtPath", () => {
     setAtPath(out, ["references"], [{ id: "a", name: "A" }])
     expect(out).toEqual({ references: [{ id: "a", name: "A" }] })
   })
+
+  it("walks two levels of array nesting", () => {
+    const out = {}
+    setAtPath(out, ["projects", { id: "p1" }, "outcomes", { id: "o1" }, "value"], "40 countries")
+    expect(out).toEqual({
+      projects: [{ id: "p1", outcomes: [{ id: "o1", value: "40 countries" }] }],
+    })
+  })
+
+  it("throws rather than silently dropping a value when the path ends with an id", () => {
+    expect(() => setAtPath({}, ["work", { id: "acme" }], { company: "Acme" })).toThrow(/end with/)
+  })
+
+  it("throws rather than writing to the root when the path starts with an id", () => {
+    expect(() => setAtPath({}, [{ id: "x" }, "a"], 1)).toThrow(/start with/)
+  })
+
+  it("throws on an empty path", () => {
+    expect(() => setAtPath({}, [], 1)).toThrow(/empty/)
+  })
 })
 ```
 
@@ -1308,6 +1328,22 @@ export function setAtPath(
   path: Segment[],
   value: unknown,
 ): void {
+  // A path must begin and end with an object key. The walk below consumes id
+  // segments as lookaheads from a preceding string key, so an id in either
+  // terminal position is not merely unsupported — it silently writes nothing,
+  // or writes to the root instead of into the array entry. Fail loudly.
+  if (path.length === 0) {
+    throw new Error("setAtPath: path must not be empty")
+  }
+  const first = path[0]
+  const final = path[path.length - 1]
+  if (typeof first !== "string") {
+    throw new Error(`setAtPath: path must start with an object key, received ${JSON.stringify(first)}`)
+  }
+  if (typeof final !== "string") {
+    throw new Error(`setAtPath: path must end with an object key, received ${JSON.stringify(final)}`)
+  }
+
   let container: Record<string, unknown> = root
 
   for (let index = 0; index < path.length - 1; index += 1) {
@@ -1345,7 +1381,7 @@ export function setAtPath(
 - [ ] **Step 4: Run the test and verify it passes**
 
 Run: `npm test -- tests/unit/vault-paths.test.ts`
-Expected: PASS, 10 tests.
+Expected: PASS, 14 tests.
 
 - [ ] **Step 5: Commit**
 
