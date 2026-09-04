@@ -284,9 +284,12 @@ The script has two distinct modes, because generating and consuming a
 passphrase are different jobs and conflating them would mint a new passphrase
 on every CI build, invalidating every link already sent.
 
-- `build-vault --init <audience>` **generates** a passphrase — six words from
-  the EFF long wordlist joined by hyphens, roughly 77 bits — prints it once for
-  the author to store, and exits.
+- `build-vault --init <audience>` **generates** a passphrase — four groups of
+  five Crockford base32 symbols, 100 bits, e.g. `k3m9p-x2vqa-7htnr-wd4je` —
+  prints it once for the author to store, and exits. This supersedes an earlier
+  choice of six EFF-wordlist words (~77 bits): vendoring a 7,776-word list to
+  buy memorability is poor value for a passphrase that travels inside a share
+  link, and the base32 form is stronger.
 - The normal build path **consumes** `VAULT_PASSPHRASE_<AUDIENCE>` from the
   environment, and fails loudly if private files exist but the variable does
   not.
@@ -355,7 +358,7 @@ gap.
 This scheme is **offline-attackable**. The ciphertext is public, so an attacker
 can grind passphrases locally with no rate limit. Exactly one thing therefore
 matters: passphrase entropy. A human-chosen phrase is worth perhaps 30 bits and
-falls in hours; the generated 77-bit phrase, at 600,000 KDF iterations, does
+falls in hours; the generated 100-bit phrase, at 600,000 KDF iterations, does
 not.
 
 Revocation is the honest weakness. Publishing ciphertext is irreversible for
