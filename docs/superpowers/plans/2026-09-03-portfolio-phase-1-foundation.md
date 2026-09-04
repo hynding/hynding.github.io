@@ -2272,7 +2272,21 @@ export function ResumeProvider({
 
       if (opened === null) throw new Error("That passphrase did not work.")
 
-      applyPatch(opened) // throws before anything is stored if the merge is invalid
+      // Validate before storing anything. The decrypted blob is untrusted
+      // input even though we authored it — the build is the only trusted
+      // execution context in a static site. Surface a generic message: Zod's
+      // internal text is a developer concern, and putting schema detail in
+      // front of the one person holding the passphrase is exactly the wrong
+      // audience for it.
+      try {
+        applyPatch(opened)
+      } catch (caught) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error("[vault] decrypted payload failed validation", caught)
+        }
+        throw new Error("That link is out of date — ask for a new one.")
+      }
+
       setPatch(opened)
       try {
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify(opened))
