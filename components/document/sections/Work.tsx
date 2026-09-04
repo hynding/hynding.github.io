@@ -11,8 +11,8 @@ export function Work({ work }: { work: Resume["work"] }) {
           </h3>
           <p className="text-sm text-[var(--muted)]">{entry.duration}</p>
           <ul className="mt-1 list-disc space-y-1 pl-5">
-            {entry.responsibilities.map((item) => (
-              <li key={item}>{item}</li>
+            {entry.responsibilities.map((item, index) => (
+              <li key={`${index}-${item}`}>{item}</li>
             ))}
           </ul>
           <p className="mt-1 text-sm text-[var(--muted)]">{entry.technologies.join(" · ")}</p>

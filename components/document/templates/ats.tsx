@@ -38,8 +38,8 @@ export function AtsTemplate({ resume }: { resume: Resume }) {
 
       <Section title="Certifications">
         <ul className="list-disc space-y-1 pl-5">
-          {resume.certifications.map((item) => (
-            <li key={item}>{item}</li>
+          {resume.certifications.map((item, index) => (
+            <li key={`${index}-${item}`}>{item}</li>
           ))}
         </ul>
       </Section>
