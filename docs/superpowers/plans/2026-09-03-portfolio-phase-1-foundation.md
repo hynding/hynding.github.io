@@ -2652,23 +2652,23 @@ test("an unlocked session survives a reload", async ({ page }) => {
 })
 
 // The reload test above passes under either storage backend, so on its own it
-// pins nothing about privacy. sessionStorage is per browsing context; a new
-// context is a new session. Under localStorage the unlocked state would leak
-// across it, which is exactly the regression this pins.
-test("an unlocked session does not survive into a new browsing context", async ({
+// pins nothing about privacy. Note that `browser.newContext()` does NOT pin it
+// either: a new context is an isolated storage partition akin to a fresh
+// incognito profile, so it wipes localStorage too and would pass under either
+// backend. The actual discriminator is a second tab in the SAME context
+// (`context.newPage()`): localStorage is visible there, sessionStorage is not.
+test("an unlocked session does not leak into a new tab in the same browser", async ({
   page,
-  browser,
-  baseURL,
+  context,
 }) => {
   await page.goto(`/#k=full.${FULL}`)
   await expect(page.getByText("steve.hynding@example.com")).toBeVisible({ timeout: 30_000 })
 
-  const fresh = await browser.newContext({ baseURL })
-  const freshPage = await fresh.newPage()
-  await freshPage.goto("/")
-  await expect(freshPage.getByText("Available on request").first()).toBeVisible()
-  await expect(freshPage.getByText("steve.hynding@example.com")).toHaveCount(0)
-  await fresh.close()
+  const tab2 = await context.newPage()
+  await tab2.goto("/")
+  await expect(tab2.getByText("Available on request").first()).toBeVisible()
+  await expect(tab2.getByText("steve.hynding@example.com")).toHaveCount(0)
+  await tab2.close()
 })
 
 test("applies the theme before first paint", async ({ page }) => {
