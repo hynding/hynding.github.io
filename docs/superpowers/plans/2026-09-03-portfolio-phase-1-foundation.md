@@ -855,6 +855,22 @@ describe("merge", () => {
   it("throws when an array entry in the patch has no id", () => {
     expect(() => merge({ work: [{ id: "x" }] }, { work: [{ company: "no id" }] })).toThrow(/id/)
   })
+
+  it("throws on an id-less entry even when the base holds a private marker", () => {
+    const base = { references: { private: "references", public: "On request" } }
+    expect(() => merge(base, { references: [{ name: "no id" }] })).toThrow(/id/)
+  })
+
+  it("returns the base untouched for an undefined patch", () => {
+    const base = { work: [{ id: "x", company: "X" }] }
+    const out = merge(base, undefined)
+    expect(out).toEqual(base)
+    expect(base.work[0].company).toBe("X")
+  })
+
+  it("lets a null patch value replace a public value", () => {
+    expect(merge({ a: 1 }, { a: null })).toEqual({ a: null })
+  })
 })
 ```
 
@@ -882,18 +898,29 @@ const hasId = (value: unknown): value is { id: string } =>
  * value to the wrong entry. An id absent from the base is appended, which is
  * how wholly-confidential entries arrive.
  *
- * Pure — the base is never mutated.
+ * Neither input is ever mutated. The result is not a deep clone, though:
+ * subtrees the patch does not touch are shared by reference with the base,
+ * which is ordinary persistent-update behaviour. `merge(base, undefined)`
+ * therefore returns the base itself. Callers must treat the result as
+ * read-only — both call sites pass it straight to `resumeSchema.parse()`,
+ * which does not mutate its input.
  */
 export function merge(base: unknown, patch: unknown): unknown {
   if (patch === undefined) return base
 
   if (Array.isArray(patch)) {
-    if (!Array.isArray(base)) return patch
-    const out = [...base]
+    // Validate every entry before branching. Checking inside the merge loop
+    // below would skip validation entirely on the replace path, so the same
+    // id-less entry would throw or not depending on the base's shape.
     for (const entry of patch) {
       if (!hasId(entry)) {
         throw new Error(`merge: every array entry needs an id, received ${JSON.stringify(entry)}`)
       }
+    }
+
+    if (!Array.isArray(base)) return patch
+    const out = [...base]
+    for (const entry of patch) {
       const index = out.findIndex((existing) => hasId(existing) && existing.id === entry.id)
       if (index === -1) out.push(entry)
       else out[index] = merge(out[index], entry)
@@ -916,7 +943,7 @@ export function merge(base: unknown, patch: unknown): unknown {
 - [ ] **Step 4: Run the test and verify it passes**
 
 Run: `npm test -- tests/unit/merge.test.ts`
-Expected: PASS, 9 tests.
+Expected: PASS, 12 tests.
 
 - [ ] **Step 5: Commit**
 
