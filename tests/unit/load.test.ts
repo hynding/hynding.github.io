@@ -1,3 +1,4 @@
+import path from "node:path"
 import { describe, it, expect } from "vitest"
 import { loadResume, loadAudiences, readYamlIfPresent } from "@/lib/resume/load"
 
@@ -34,5 +35,10 @@ describe("loadAudiences", () => {
 describe("readYamlIfPresent", () => {
   it("returns null for a file that does not exist", () => {
     expect(readYamlIfPresent("definitely-not-here.yaml")).toBeNull()
+  })
+
+  it("accepts an absolute path so tests can point at fixtures", () => {
+    const fixture = path.join(process.cwd(), "tests/fixtures/resume.private.yaml")
+    expect(readYamlIfPresent(fixture)).not.toBeNull()
   })
 })

@@ -22,7 +22,7 @@ async function main() {
 
   fs.rmSync(VAULT_DIR, { recursive: true, force: true })
 
-  const patch = readYamlIfPresent("resume.private.yaml")
+  const patch = readYamlIfPresent(process.env.VAULT_PRIVATE_FILE ?? "resume.private.yaml")
   if (patch === null) {
     console.warn("[vault] no data/resume.private.yaml — building in public mode")
     return

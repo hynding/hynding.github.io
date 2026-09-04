@@ -9,7 +9,8 @@ import { z } from "zod"
  * loader used a path relative to the process working directory and worked
  * only when `next dev` ran from inside packages/nextjs.
  */
-const dataPath = (file: string) => path.join(process.cwd(), "data", file)
+const dataPath = (file: string) =>
+  path.isAbsolute(file) ? file : path.join(process.cwd(), "data", file)
 
 export function readYaml(file: string): unknown {
   return yaml.load(fs.readFileSync(dataPath(file), "utf8"))
