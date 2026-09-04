@@ -51,6 +51,17 @@ describe("resumeSchema", () => {
     expect(() => resumeSchema.parse(dated)).toThrow()
   })
 
+  it("rejects duplicate ids within an array", () => {
+    const dupes = { ...validResume, work: [validResume.work[0], { ...validResume.work[0] }] }
+    expect(() => resumeSchema.parse(dupes)).toThrow(/duplicate id/)
+  })
+
+  it("rejects duplicate ids in a gated collection once unlocked", () => {
+    const reference = { id: "a", name: "A", title: "T", contact: "c" }
+    const dupes = { ...validResume, references: [reference, { ...reference }] }
+    expect(() => resumeSchema.parse(dupes)).toThrow(/duplicate id/)
+  })
+
   it("rejects an unknown tier in a private marker", () => {
     expect(() => privateMarkerSchema.parse({ private: "salary", public: "x" })).toThrow()
   })

@@ -30,6 +30,28 @@ export const maybePrivate = <T extends z.ZodTypeAny>(inner: T) =>
  */
 const entryId = z.string().min(1)
 
+/**
+ * Presence of an id is not enough. `merge()` locates entries with findIndex,
+ * so a duplicate id makes the second entry unreachable and silently lands
+ * every patch on the first — which is exactly the class of failure the id
+ * rule exists to prevent.
+ */
+const uniqueById = <T extends z.ZodTypeAny>(entry: T) =>
+  z.array(entry).superRefine((entries, ctx) => {
+    const seen = new Set<string>()
+    entries.forEach((item, index) => {
+      const { id } = item as { id: string }
+      if (seen.has(id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [index, "id"],
+          message: `duplicate id "${id}"`,
+        })
+      }
+      seen.add(id)
+    })
+  })
+
 export const workEntrySchema = z.object({
   id: entryId,
   company: maybePrivate(z.string()),
@@ -63,10 +85,10 @@ export const resumeSchema = z.object({
     phone: maybePrivate(z.string()),
     skills: z.array(z.string()),
   }),
-  work: z.array(workEntrySchema),
-  education: z.array(educationEntrySchema),
+  work: uniqueById(workEntrySchema),
+  education: uniqueById(educationEntrySchema),
   certifications: z.array(z.string()),
-  references: maybePrivate(z.array(referenceEntrySchema)),
+  references: maybePrivate(uniqueById(referenceEntrySchema)),
 })
 
 export type Resume = z.infer<typeof resumeSchema>
