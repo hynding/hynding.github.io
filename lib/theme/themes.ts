@@ -55,13 +55,23 @@ const block = (selector: string, values: Record<Token, string>) =>
  * phase 4's scene reads the same `themes` objects for materials and lighting.
  */
 export function themeCss(): string {
-  return themes
-    .flatMap((theme) => {
+  const fallback = themes.find((theme) => theme.id === DEFAULT_THEME) ?? themes[0]
+
+  return [
+    // Element-selector defaults, specificity (0,0,1), so every [data-theme]
+    // block outranks them regardless of source order. Without this, a page
+    // whose pre-paint script never ran — JS disabled, CSP or an extension
+    // blocking inline scripts, localStorage throwing on read — matches no
+    // theme selector at all and renders every token undefined: an unstyled
+    // wall of text, which is the exact failure the .nojekyll guard exists to
+    // prevent, arriving by a different route.
+    block("html", fallback.darkOnly ? fallback.dark : fallback.light),
+    ...themes.flatMap((theme) => {
       const dark = block(`[data-theme="${theme.id}"][data-mode="dark"]`, theme.dark)
       if (theme.darkOnly) return [block(`[data-theme="${theme.id}"]`, theme.dark), dark]
       return [block(`[data-theme="${theme.id}"]`, theme.light), dark]
-    })
-    .join("\n")
+    }),
+  ].join("\n")
 }
 
 /**

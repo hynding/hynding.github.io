@@ -32,4 +32,10 @@ describe("themeCss", () => {
   it("emits a selector per theme", () => {
     for (const theme of themes) expect(themeCss()).toContain(`[data-theme="${theme.id}"]`)
   })
+
+  it("emits a fallback block so a page renders when the pre-paint script never runs", () => {
+    const fallback = /^html\{([^}]*)\}/m.exec(themeCss())
+    expect(fallback).not.toBeNull()
+    for (const token of TOKENS) expect(fallback![1]).toContain(`--${token}:`)
+  })
 })
