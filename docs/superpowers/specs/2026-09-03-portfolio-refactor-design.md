@@ -113,6 +113,14 @@ Added: `zod` (major version pinned — Zod 4 changed API surface) · `three`
 with `@react-three/fiber` v9 and `@react-three/drei` v10 (the React 19 line) ·
 `motion` · `vitest` with Testing Library · `@playwright/test` · `tsx`.
 
+**Verified by spike, 2026-09-03.** `next@15.4.7` · `react@19.1.0` ·
+`three@0.185.1` · `@react-three/fiber@9.7.0` · `@react-three/drei@10.7.8`
+install with no peer conflicts and build cleanly under `output: "export"` on
+Node 22. A `dynamic(..., { ssr: false })` scene keeps First Load JS at 101 kB,
+with Three.js isolated in separate 384 KB chunks that contain no reference to
+`WebGLRenderer` — the code-splitting claim in section 7 holds in practice, not
+just in principle.
+
 `next-themes` is deliberately **not** used. Section 8 already requires a custom
 blocking pre-paint script because template choice is structural, and that
 script covers the colour axis at no extra cost. Reconciling a palette axis that
@@ -583,8 +591,11 @@ source is set to "GitHub Actions" once, manually.
 Two static-export requirements, both documented because each fails
 confusingly:
 
-- **`.nojekyll` is mandatory**, written to `public/` *and* re-created in the
-  workflow with `touch out/.nojekyll`. GitHub Pages runs Jekyll by default, and
+- **`.nojekyll` is mandatory**, written to `public/`. A spike confirmed that
+  the export copies dotfiles from `public/` into `out/`, so the additional
+  `touch out/.nojekyll` in the workflow is belt-and-braces rather than
+  required — it stays because it costs nothing and the failure it guards
+  against is silent. GitHub Pages runs Jekyll by default, and
   Jekyll silently discards every directory beginning with an underscore. Next
   places the entire JavaScript and CSS payload in `_next/`. The result is a
   deploy that reports success, serves the HTML, and 404s every asset — an
@@ -600,11 +611,28 @@ Metadata for link sharing — title, description, and an OG image — is part of
 phase 2. It is the first thing anyone sees when the URL is pasted into Slack or
 LinkedIn.
 
-The image generation route needs checking against the export constraint before
-phase 2 relies on it: route handlers are unsupported under `output: "export"`,
-and whether the `opengraph-image` file convention still renders at build time
-must be **verified, not assumed**. The fallback costs little — a build-time
-script writing a PNG into `public/`, or a hand-made static image.
+Image generation was spiked on 2026-09-03 rather than assumed. Three findings,
+all of which change what phase 2 must do.
+
+**`opengraph-image.tsx` does work under `output: "export"`, but only with
+`export const dynamic = "force-static"`.** Without it the build fails outright
+at page-data collection, naming the missing export in the error. With it, a
+1200×630 PNG is emitted at build time.
+
+**`metadataBase` must be set, and this is the dangerous one.** Left unset, the
+build succeeds and emits
+`<meta property="og:image" content="http://localhost:3000/opengraph-image?…">`.
+The site looks perfect and every link preview on Slack and LinkedIn is broken,
+pointing at the sharer's own machine. The failure is silent, production-only,
+and invisible to local testing — exactly the profile of a bug that ships.
+
+**The generated file has no extension** (`out/opengraph-image`). GitHub Pages
+will most likely serve it as `application/octet-stream`, and crawlers may
+refuse a non-image content type. This cannot be confirmed without deploying, so
+phase 2 **sidesteps it**: a real `public/og.png` referenced explicitly from
+`metadata.openGraph.images`. Generating that PNG with a build-time script
+remains available, but the artifact it produces has a `.png` extension and a
+content type Pages is certain to get right.
 
 ## 12. Sequencing
 
