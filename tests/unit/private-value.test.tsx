@@ -18,8 +18,8 @@ describe("PrivateValue", () => {
     expect(node.dataset.locked).toBe("true")
   })
 
-  it("labels the locked state for assistive technology", () => {
+  it("announces the locked state as real text, not by styling alone", () => {
     render(<PrivateValue field={{ private: "contact", public: "Available on request" }} />)
-    expect(screen.getByLabelText(/withheld/i)).toBeTruthy()
+    expect(screen.getByText(/withheld until unlocked/i)).toBeTruthy()
   })
 })
