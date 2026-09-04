@@ -6,7 +6,7 @@
 
 **Architecture:** One Next.js app at the repository root. A single YAML document parses into a Zod-validated model that knows nothing about presentation; a document renderer consumes it through a pure `resolve()` redaction primitive. Sensitive values live in a gitignored private YAML, are encrypted per audience at build time into static blobs, and are decrypted in-browser with a passphrase.
 
-**Tech Stack:** Next 15.4.7 (`output: "export"`) · React 19.1 · TypeScript 5 · Tailwind v4 · Zod 3 · js-yaml · Vitest · Playwright · tsx · GitHub Actions → Pages
+**Tech Stack:** Next ^15.5.25 (`output: "export"`) · React 19.1 · TypeScript 5 · Tailwind v4 · Zod 3 · js-yaml · Vitest · Playwright · tsx · GitHub Actions → Pages
 
 **Spec:** `docs/superpowers/specs/2026-09-03-portfolio-refactor-design.md`
 
@@ -17,6 +17,7 @@
 - **The repository is public.** `data/resume.private.yaml` and `public/vault/` are gitignored and must never be committed.
 - **Node 20 or later** (spike verified on 22.14.0).
 - **Zod is pinned to `^3.23`.** Zod 4 changed API surface; all code in this plan is Zod 3.
+- **Next is `^15.5.25` and Vitest is `^5.0.0`** (controller ruling R8). Both floors are security-driven: the versions originally planned carry unfixed criticals.
 - **Every array entry in every YAML document carries a unique `id`.** Enforced by schema. This is what makes the private-patch merge order-independent.
 - **Quote every date-like YAML scalar.** Unquoted `2023-01-01` becomes a JavaScript `Date` under js-yaml and fails `z.string()`.
 - **KDF parameters are fixed:** PBKDF2-HMAC-SHA256, 600,000 iterations, 16-byte salt, AES-256-GCM, 12-byte IV.
@@ -102,7 +103,7 @@ touch public/.nojekyll
   },
   "dependencies": {
     "js-yaml": "^4.1.0",
-    "next": "15.4.7",
+    "next": "^15.5.25",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "zod": "^3.23.8"
@@ -117,7 +118,7 @@ touch public/.nojekyll
     "tailwindcss": "^4",
     "tsx": "^4.19.0",
     "typescript": "^5",
-    "vitest": "^2.1.0"
+    "vitest": "^5.0.0"
   }
 }
 ```
@@ -1780,7 +1781,6 @@ export default defineConfig({
   plugins: [react()],
   test: {
     include: ["tests/unit/**/*.test.ts", "tests/unit/**/*.test.tsx"],
-    environmentMatchGlobs: [["tests/unit/**/*.test.tsx", "jsdom"]],
     environment: "node",
   },
   resolve: {
@@ -1789,11 +1789,17 @@ export default defineConfig({
 })
 ```
 
+The DOM environment is selected per file by a docblock rather than by
+`environmentMatchGlobs`, which modern Vitest removed in favour of the
+`projects` API. A per-file docblock is stable across every Vitest major and
+needs no project configuration at all.
+
 - [ ] **Step 2: Write the failing test**
 
 `tests/unit/private-value.test.tsx`:
 
 ```tsx
+// @vitest-environment jsdom
 import { describe, it, expect, afterEach } from "vitest"
 import { render, screen, cleanup } from "@testing-library/react"
 import { PrivateValue } from "@/components/privacy/PrivateValue"
