@@ -1944,9 +1944,9 @@ describe("PrivateValue", () => {
     expect(node.dataset.locked).toBe("true")
   })
 
-  it("labels the locked state for assistive technology", () => {
+  it("announces the locked state as real text, not by styling alone", () => {
     render(<PrivateValue field={{ private: "contact", public: "Available on request" }} />)
-    expect(screen.getByLabelText(/withheld/i)).toBeTruthy()
+    expect(screen.getByText(/withheld until unlocked/i)).toBeTruthy()
   })
 })
 ```
@@ -1977,10 +1977,18 @@ export function PrivateValue({ field }: { field: string | PrivateMarker }) {
   return (
     <span
       data-locked="true"
-      aria-label={`${value} — withheld until unlocked`}
       className="italic text-[var(--muted)] underline decoration-dotted underline-offset-4"
     >
       {value}
+      {/*
+        Real visually-hidden text, not aria-label. A bare <span> has the ARIA
+        `generic` role, whose name computation is "prohibited" — user agents
+        are told not to derive an accessible name from aria-label on it, and
+        support for that rule is inconsistent. Actual text content is
+        unambiguous, and it composes with the visible placeholder instead of
+        replacing it the way a computed name would.
+      */}
+      <span className="sr-only"> — withheld until unlocked</span>
     </span>
   )
 }
