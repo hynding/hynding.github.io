@@ -48,4 +48,16 @@ describe("generatePassphrase", () => {
   it("produces a typeable grouped phrase", () => {
     expect(generatePassphrase()).toMatch(/^[0-9a-z]{5}(-[0-9a-z]{5}){3}$/)
   })
+
+  it("keeps the alphabet at exactly 32 unambiguous symbols", () => {
+    const symbols = new Set(
+      Array.from({ length: 200 }, generatePassphrase).join("").replace(/-/g, ""),
+    )
+    // 256 % 32 === 0, so `byte % 32` is uniform. A 33rd symbol would skew every
+    // passphrase toward the early alphabet and silently cost entropy.
+    expect(symbols.size).toBe(32)
+    for (const ambiguous of ["i", "l", "o", "u"]) {
+      expect(symbols.has(ambiguous)).toBe(false)
+    }
+  })
 })
