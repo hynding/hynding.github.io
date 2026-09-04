@@ -21,7 +21,12 @@ function collect(node: unknown, trail: string[] = [], into: Secret[] = []): Secr
   } else if (Array.isArray(node)) {
     node.forEach((item, index) => collect(item, [...trail, String(index)], into))
   } else if (node && typeof node === "object") {
-    for (const [key, value] of Object.entries(node)) collect(value, [...trail, key], into)
+    for (const [key, value] of Object.entries(node)) {
+      // `id` is a structural join key mirrored from the public document, not a
+      // secret — it appears in the build output by design.
+      if (key === "id") continue
+      collect(value, [...trail, key], into)
+    }
   }
   return into
 }
@@ -48,9 +53,15 @@ if (!fs.existsSync(OUT)) {
 const secrets = collect(yaml.load(fs.readFileSync(PRIVATE, "utf8")))
 const haystack = readAll(OUT)
 
+/** React escapes text nodes, so a raw-value search alone misses any secret containing & < or >. */
+const htmlEscaped = (value: string) =>
+  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+
 // Report the PATH, never the value. A CI log is not a secret store, and a
 // guard that prints what leaked would leak it a second time.
-const leaked = secrets.filter((secret) => haystack.includes(secret.value)).map((s) => s.path)
+const leaked = secrets
+  .filter((secret) => haystack.includes(secret.value) || haystack.includes(htmlEscaped(secret.value)))
+  .map((secret) => secret.path)
 
 if (leaked.length > 0) {
   console.error(`[leak-check] private values present in out/: ${leaked.join(", ")}`)

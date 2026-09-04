@@ -2,6 +2,7 @@
   "name": "hynding-site",
   "version": "1.0.0",
   "private": true,
+  "engines": { "node": ">=22.12" },
   "scripts": {
     "dev": "next dev",
     "prebuild": "tsx scripts/build-vault.ts",
@@ -9,9 +10,9 @@
     "vault:init": "tsx scripts/build-vault.ts --init",
     "test": "vitest run",
     "test:watch": "vitest",
+    "check:leak": "tsx scripts/check-no-leak.ts",
     "build:e2e": "VAULT_PRIVATE_FILE=$PWD/tests/fixtures/resume.private.yaml VAULT_PASSPHRASE_RECRUITER=test-recruiter-passphrase VAULT_PASSPHRASE_FULL=test-full-passphrase npm run build",
-    "test:e2e": "npm run build:e2e && playwright test",
-    "lint": "next lint"
+    "test:e2e": "npm run build:e2e && playwright test"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",

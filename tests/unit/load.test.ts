@@ -17,7 +17,7 @@ describe("loadResume", () => {
     }
   })
 
-  it("leaves education years as strings, not Dates", () => {
+  it("leaves education years as strings, not numbers", () => {
     for (const entry of loadResume().education) {
       expect(typeof entry.year).toBe("string")
     }

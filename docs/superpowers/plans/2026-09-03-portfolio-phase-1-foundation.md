@@ -15,7 +15,7 @@
 - **Static export only.** `output: "export"` in `next.config.ts`. No route handlers, no middleware, no server runtime. Filesystem reads happen at build time only.
 - **`images: { unoptimized: true }`** is required under static export.
 - **The repository is public.** `data/resume.private.yaml` and `public/vault/` are gitignored and must never be committed.
-- **Node 20 or later** (spike verified on 22.14.0).
+- **Node 22.12 or later** (vitest@5's engine floor; the workflow and package.json engines both declare it).
 - **Zod is pinned to `^3.23`.** Zod 4 changed API surface; all code in this plan is Zod 3.
 - **Next is `^15.5.25` and Vitest is `^5.0.0`** (controller ruling R8). Both floors are security-driven: the versions originally planned carry unfixed criticals.
 - **Every array entry in every YAML document carries a unique `id`.** Enforced by schema. This is what makes the private-patch merge order-independent.

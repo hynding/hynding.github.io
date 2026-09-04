@@ -119,7 +119,7 @@ export function ResumeProvider({
       }
 
       void unlock(decodeURIComponent(match[2]), audience).catch((caught) => {
-        setLinkError(caught instanceof Error ? caught.message : "That link did not work.")
+        setLinkError(caught instanceof Error ? caught.message : "That link did not work — ask for a new one.")
       })
       return
     }
