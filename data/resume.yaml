@@ -1,0 +1,69 @@
+basics:
+  name: Steve Hynding
+  role: Full-stack Engineer / UX Specialist
+  website: https://hynding.github.io
+  summary: >-
+    Experienced full-stack engineer with a strong background in UX design.
+  email:
+    private: contact
+    public: Available on request
+  phone:
+    private: contact
+    public: Available on request
+  skills:
+    - Node.js
+    - React
+    - TypeScript
+    - HTML
+    - CSS
+    - AWS
+    - Python
+    - Vue
+    - Angular
+    - D3
+    - Material UI
+    - Tailwind
+    - Cucumber
+    - Selenium
+
+work:
+  - id: bcg
+    company: Boston Consulting Group
+    position: Lead Engineer (Full-stack)
+    duration: April 2016 - Present
+    responsibilities:
+      - >-
+        Worked with partners and clients to develop a wide variety of software
+        solutions from innovation prototypes through to production.
+      - >-
+        Engineered and integrated full-stack solutions for content management
+        systems, analytics charting, IoT and AI training interfaces.
+      - >-
+        Teamed with designers and product managers to build responsive,
+        test-driven web applications.
+    technologies:
+      - Node.js
+      - React
+      - TypeScript
+      - AWS
+      - Python
+      - D3
+
+education:
+  - id: lmu
+    institution: Loyola Marymount University
+    year: "2000"
+    study: B.A. Film Production / Computer Science (minor)
+  - id: smc
+    institution: Santa Monica College
+    year: "2005"
+    study: Java Server Pages
+
+certifications:
+  - Meta Front-end Development (In-progress)
+  - Google Cyber Security (In-progress)
+  - Google Data Analytics (In-progress)
+
+references:
+  private: references
+  public: Available on request
