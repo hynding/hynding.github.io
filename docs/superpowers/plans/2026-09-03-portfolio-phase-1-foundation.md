@@ -2562,11 +2562,18 @@ export default defineConfig({
 Add to `package.json` scripts:
 
 ```json
-    "build:e2e": "VAULT_PRIVATE_FILE=tests/fixtures/resume.private.yaml VAULT_PASSPHRASE_RECRUITER=test-recruiter-passphrase VAULT_PASSPHRASE_FULL=test-full-passphrase npm run build",
+    "build:e2e": "VAULT_PRIVATE_FILE=$PWD/tests/fixtures/resume.private.yaml VAULT_PASSPHRASE_RECRUITER=test-recruiter-passphrase VAULT_PASSPHRASE_FULL=test-full-passphrase npm run build",
     "test:e2e": "npm run build:e2e && playwright test"
 ```
 
-Note `VAULT_PRIVATE_FILE` here is relative to `data/`, so use the absolute form in CI if the path resolves oddly: `VAULT_PRIVATE_FILE=$PWD/tests/fixtures/resume.private.yaml`.
+The path **must** be absolute (`$PWD/...`), not relative. Step 1 changes
+`dataPath` to resolve relative names under `data/`, so a bare
+`tests/fixtures/resume.private.yaml` would resolve to
+`data/tests/fixtures/resume.private.yaml`, which does not exist. The failure
+is quiet rather than loud: `readYamlIfPresent` returns `null`, the build logs
+its public-mode warning and succeeds, no vault is written, and the first sign
+of trouble is every unlock end-to-end test failing with "no vault published
+for this audience" — an error that points nowhere near the actual cause.
 
 - [ ] **Step 4: Write the end-to-end tests**
 
