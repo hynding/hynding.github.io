@@ -239,7 +239,7 @@ to the root so build-time file reads have a stable base."
 The schema is the contract every later task depends on. It fails the build on malformed data rather than rendering `undefined` to a reader.
 
 **Files:**
-- Create: `lib/resume/schema.ts`, `vitest.config.ts`
+- Create: `lib/resume/schema.ts`, `vitest.config.mts`
 - Test: `tests/unit/schema.test.ts`
 
 **Interfaces:**
@@ -253,7 +253,7 @@ The schema is the contract every later task depends on. It fails the build on ma
 
 - [ ] **Step 1: Add the Vitest config**
 
-`vitest.config.ts`:
+`vitest.config.mts`:
 
 ```typescript
 import { defineConfig } from "vitest/config"
@@ -265,7 +265,7 @@ export default defineConfig({
     include: ["tests/unit/**/*.test.ts"],
   },
   resolve: {
-    alias: { "@": path.resolve(__dirname, ".") },
+    alias: { "@": path.resolve(import.meta.dirname, ".") },
   },
 })
 ```
@@ -432,7 +432,7 @@ Expected: PASS, 6 tests.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add lib/resume/schema.ts tests/unit/schema.test.ts vitest.config.ts
+git add lib/resume/schema.ts tests/unit/schema.test.ts vitest.config.mts
 git commit -m "feat: add Zod schema for the resume model
 
 Declares sensitive slots rather than omitting them, requires an id on every
@@ -1758,7 +1758,7 @@ Single column, real heading elements, no meaning carried by icons, no text baked
 **Files:**
 - Create: `components/privacy/PrivateValue.tsx`, `components/document/sections/*.tsx`, `components/document/templates/ats.tsx`
 - Test: `tests/unit/private-value.test.tsx`
-- Modify: `vitest.config.ts`, `app/page.tsx`
+- Modify: `vitest.config.mts`, `app/page.tsx`
 
 **Interfaces:**
 - Consumes: `Resume`, `PrivateMarker` (Task 2); `resolve` (Task 4); `loadResume` (Task 3)
@@ -1770,7 +1770,7 @@ Single column, real heading elements, no meaning carried by icons, no text baked
 
 Install: `npm i -D jsdom @testing-library/react @vitejs/plugin-react`
 
-`vitest.config.ts`:
+`vitest.config.mts`:
 
 ```typescript
 import { defineConfig } from "vitest/config"
@@ -1784,7 +1784,7 @@ export default defineConfig({
     environment: "node",
   },
   resolve: {
-    alias: { "@": path.resolve(__dirname, ".") },
+    alias: { "@": path.resolve(import.meta.dirname, ".") },
   },
 })
 ```
@@ -2046,7 +2046,7 @@ Expected: build succeeds, grep reports at least 1.
 - [ ] **Step 9: Commit**
 
 ```bash
-git add components app/page.tsx vitest.config.ts tests/unit/private-value.test.tsx package.json
+git add components app/page.tsx vitest.config.mts tests/unit/private-value.test.tsx package.json
 git commit -m "feat: render the resume through the ATS template
 
 Gated scalars go through PrivateValue; the gated references collection
