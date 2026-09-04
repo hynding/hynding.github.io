@@ -99,3 +99,11 @@ test("applies the theme before first paint", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("data-theme", "slate")
   await expect(page.locator("html")).toHaveAttribute("data-template", "ats")
 })
+
+test("emits absolute share metadata, never localhost", async ({ request }) => {
+  const html = await (await request.get("/")).text()
+  const ogImage = /<meta property="og:image" content="([^"]+)"/.exec(html)?.[1]
+  expect(ogImage).toBeTruthy()
+  expect(ogImage).not.toContain("localhost")
+  expect(ogImage!.startsWith("https://hynding.github.io")).toBe(true)
+})

@@ -1,0 +1,69 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      - name: Materialise private data
+        env:
+          RESUME_PRIVATE_YAML: ${{ secrets.RESUME_PRIVATE_YAML }}
+        run: |
+          if [ -n "$RESUME_PRIVATE_YAML" ]; then
+            printf '%s' "$RESUME_PRIVATE_YAML" > data/resume.private.yaml
+            echo "private data present; vault will be sealed"
+          else
+            echo "no private data; building in public mode"
+          fi
+
+      - name: Build
+        env:
+          VAULT_PASSPHRASE_RECRUITER: ${{ secrets.VAULT_PASSPHRASE_RECRUITER }}
+          VAULT_PASSPHRASE_FULL: ${{ secrets.VAULT_PASSPHRASE_FULL }}
+        run: npm run build
+
+      # Belt and braces: the export already copies public/.nojekyll, but the
+      # failure it guards against is a silently unstyled site with no error in
+      # the build log, so it is re-created here.
+      - run: touch out/.nojekyll
+
+      - name: Fail if any private value reached the build output
+        run: npx tsx scripts/check-no-leak.ts
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
