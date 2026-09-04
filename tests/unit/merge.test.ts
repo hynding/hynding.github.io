@@ -50,4 +50,20 @@ describe("merge", () => {
   it("throws when an array entry in the patch has no id", () => {
     expect(() => merge({ work: [{ id: "x" }] }, { work: [{ company: "no id" }] })).toThrow(/id/)
   })
+
+  it("throws on an id-less entry even when the base holds a private marker", () => {
+    const base = { references: { private: "references", public: "On request" } }
+    expect(() => merge(base, { references: [{ name: "no id" }] })).toThrow(/id/)
+  })
+
+  it("returns the base untouched for an undefined patch", () => {
+    const base = { work: [{ id: "x", company: "X" }] }
+    const out = merge(base, undefined)
+    expect(out).toEqual(base)
+    expect(base.work[0].company).toBe("X")
+  })
+
+  it("lets a null patch value replace a public value", () => {
+    expect(merge({ a: 1 }, { a: null })).toEqual({ a: null })
+  })
 })
