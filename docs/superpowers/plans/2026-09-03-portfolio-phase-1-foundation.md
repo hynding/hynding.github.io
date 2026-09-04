@@ -774,7 +774,8 @@ export function resolve<T>(field: T | PrivateMarker): Resolved<T> {
 - [ ] **Step 4: Run the test and verify it passes**
 
 Run: `npm test -- tests/unit/resolve.test.ts`
-Expected: PASS, 7 tests.
+Expected: PASS, 8 tests (3 in the `resolve` block, plus 5 rows from the
+`it.each` in the `isPrivateMarker` block).
 
 - [ ] **Step 5: Commit**
 
