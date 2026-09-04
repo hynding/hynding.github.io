@@ -1600,10 +1600,12 @@ async function main() {
     return
   }
 
+  const audiences = loadAudiences()
+
   const blobs = await buildVaults({
     resume,
     patch,
-    audiences: loadAudiences(),
+    audiences,
     passphraseFor: (audience) => process.env[`VAULT_PASSPHRASE_${audience.toUpperCase()}`],
   })
 
@@ -1611,6 +1613,16 @@ async function main() {
   for (const [audience, blob] of Object.entries(blobs)) {
     fs.writeFileSync(path.join(VAULT_DIR, `${audience}.json`), JSON.stringify(blob))
     console.log(`[vault] sealed ${audience}`)
+  }
+
+  // An audience entitled to no tiers that actually appear in the document
+  // produces no blob. Saying so out loud is the only way drift between
+  // audiences.yaml and resume.yaml becomes visible — otherwise a configured
+  // passphrase is silently never used until a share link 404s.
+  for (const audience of Object.keys(audiences)) {
+    if (!(audience in blobs)) {
+      console.warn(`[vault] ${audience}: no entitled tiers present in the document, nothing sealed`)
+    }
   }
 }
 
