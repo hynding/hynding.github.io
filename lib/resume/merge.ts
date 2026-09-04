@@ -12,12 +12,13 @@ const hasId = (value: unknown): value is { id: string } =>
  * value to the wrong entry. An id absent from the base is appended, which is
  * how wholly-confidential entries arrive.
  *
- * Neither input is ever mutated. The result is not a deep clone, though:
- * subtrees the patch does not touch are shared by reference with the base,
- * which is ordinary persistent-update behaviour. `merge(base, undefined)`
- * therefore returns the base itself. Callers must treat the result as
- * read-only — both call sites pass it straight to `resumeSchema.parse()`,
- * which does not mutate its input.
+ * Neither input is ever mutated. The result is not a deep clone, though: it
+ * may share structure with either input. Untouched base subtrees are shared
+ * by reference with the base, and an appended entry (the `out.push(entry)`
+ * path) is the patch's own object, shared by reference with the patch.
+ * `merge(base, undefined)` therefore returns the base itself. Callers must
+ * treat the result as read-only — both call sites pass it straight to
+ * `resumeSchema.parse()`, which does not mutate its input.
  */
 export function merge(base: unknown, patch: unknown): unknown {
   if (patch === undefined) return base
