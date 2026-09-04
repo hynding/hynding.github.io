@@ -1861,7 +1861,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - [ ] **Step 5: Run the test and verify it passes**
 
 Run: `npm test -- tests/unit/themes.test.ts`
-Expected: PASS, 5 tests.
+Expected: PASS, 6 tests.
 
 - [ ] **Step 6: Commit**
 
