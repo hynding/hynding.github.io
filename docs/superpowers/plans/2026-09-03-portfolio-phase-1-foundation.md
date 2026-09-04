@@ -19,7 +19,7 @@
 - **Zod is pinned to `^3.23`.** Zod 4 changed API surface; all code in this plan is Zod 3.
 - **Next is `^15.5.25` and Vitest is `^5.0.0`** (controller ruling R8). Both floors are security-driven: the versions originally planned carry unfixed criticals.
 - **Every array entry in every YAML document carries a unique `id`.** Enforced by schema. This is what makes the private-patch merge order-independent.
-- **Quote every date-like YAML scalar.** Unquoted `2023-01-01` becomes a JavaScript `Date` under js-yaml and fails `z.string()`.
+- **Quote every date-like YAML scalar.** js-yaml coerces by shape: `2000` becomes a number, `2023-01-01` becomes a `Date`, `2023-01` stays a string. The first two both fail `z.string()`.
 - **KDF parameters are fixed:** PBKDF2-HMAC-SHA256, 600,000 iterations, 16-byte salt, AES-256-GCM, 12-byte IV.
 - **Test commands:** `npm test` (Vitest, unit) · `npm run test:e2e` (Playwright) · `npm run build` (production static export).
 

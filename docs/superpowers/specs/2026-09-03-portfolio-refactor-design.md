@@ -224,10 +224,13 @@ the two states share a render path.
 
 ### YAML authoring rule
 
-**Quote every date-like scalar.** Under `js-yaml`, `2023-01-01` unquoted
-resolves to a JavaScript `Date` and fails `z.string()`, while `2023-01` stays a
-string. Coercion that varies by string length is a confusing failure, so the
-schema requires quoted strings and the build rejects `Date` instances.
+**Quote every date-like scalar.** Under `js-yaml`, an unquoted scalar is
+coerced by its shape: `2000` becomes a **number**, `2023-01-01` becomes a
+JavaScript **`Date`**, and `2023-01` stays a string. The first two both fail
+`z.string()`, and which one you get depends on how the value happens to be
+written — a confusing failure. The schema therefore requires quoted strings and
+the build rejects both numbers and `Date` instances where a string is
+expected.
 
 ## 5. Privacy — the vault
 
