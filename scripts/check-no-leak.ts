@@ -53,9 +53,19 @@ if (!fs.existsSync(OUT)) {
 const secrets = collect(yaml.load(fs.readFileSync(PRIVATE, "utf8")))
 const haystack = readAll(OUT)
 
-/** React escapes text nodes, so a raw-value search alone misses any secret containing & < or >. */
+/**
+ * React escapes text nodes and attribute values alike, so a raw-value search
+ * alone misses any secret containing & < > " or '. The apostrophe matters most
+ * in practice: a reference named O'Brien, or a client named McDonald's, renders
+ * escaped and would otherwise slip past the guard entirely.
+ */
 const htmlEscaped = (value: string) =>
-  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;")
 
 // Report the PATH, never the value. A CI log is not a secret store, and a
 // guard that prints what leaked would leak it a second time.
