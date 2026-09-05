@@ -1,0 +1,8 @@
+basics:
+  email: steve.hynding@example.com
+  phone: "+1 555 0100"
+references:
+  - id: a-referee
+    name: A Referee
+    title: Managing Director
+    contact: referee@example.com

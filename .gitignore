@@ -1,1 +1,10 @@
+node_modules
+.next
+out
 .env
+.DS_Store
+data/*.private.yaml
+public/vault
+test-results
+playwright-report
+tsconfig.tsbuildinfo
