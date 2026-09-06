@@ -1,0 +1,15 @@
+# Steve Hynding
+
+> Resume and portfolio of Steve Hynding, Lead Full-Stack Engineer in Los
+> Angeles — two decades shipping web products for EA, Sony, BCG Digital
+> Ventures / BCG X, Pacaso, Jubilee Media and Superhuman.
+
+## Resume
+
+- [Resume (HTML)](https://hynding.github.io/): the canonical page, with
+  schema.org Person structured data inline.
+- [Resume (JSON Resume format)](https://hynding.github.io/resume.json):
+  machine-readable, per the jsonresume.org schema.
+
+Contact details and references are deliberately withheld from public copies
+and are available on request.

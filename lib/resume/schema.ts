@@ -75,14 +75,23 @@ export const referenceEntrySchema = z.object({
   contact: z.string(),
 })
 
+export const profileEntrySchema = z.object({
+  id: entryId,
+  network: z.string(),
+  url: z.string().url(),
+})
+
 export const resumeSchema = z.object({
   basics: z.object({
     name: z.string(),
     role: z.string(),
     website: z.string().url(),
+    location: z.string().optional(),
     summary: z.string(),
     email: maybePrivate(z.string()),
     phone: maybePrivate(z.string()),
+    /** Public professional profiles — these feed JSON-LD sameAs and the header links. */
+    profiles: uniqueById(profileEntrySchema).optional(),
     skills: z.array(z.string()),
   }),
   work: uniqueById(workEntrySchema),

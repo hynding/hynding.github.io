@@ -1,68 +1,260 @@
 basics:
   name: Steve Hynding
-  role: Full-stack Engineer / UX Specialist
+  role: Lead Full-Stack Engineer
   website: https://hynding.github.io
+  location: Los Angeles, CA
   summary: >-
-    Experienced full-stack engineer with a strong background in UX design.
+    Lead full-stack engineer in Los Angeles with two decades shipping web
+    products — from EA.com and Sony Network Entertainment's internal
+    analytics, through seven years building venture products and AI platforms
+    at BCG Digital Ventures and BCG X, to current contract work whose backend
+    serves 120k+ users. Deep in TypeScript, React, Node and Next.js, with
+    hands-on UX craft and a test-driven habit.
   email:
     private: contact
     public: Available on request
   phone:
     private: contact
     public: Available on request
+  profiles:
+    - id: linkedin
+      network: LinkedIn
+      url: https://www.linkedin.com/in/stevehynding
+    - id: github
+      network: GitHub
+      url: https://github.com/hynding
   skills:
-    - Node.js
-    - React
     - TypeScript
-    - HTML
-    - CSS
-    - AWS
-    - Python
+    - JavaScript
+    - React
+    - Next.js
+    - Node.js
+    - React Native
     - Vue
     - Angular
-    - D3
-    - Material UI
+    - Python
+    - PostgreSQL
+    - MongoDB
+    - GraphQL
+    - Redis
+    - AWS
+    - Docker
     - Tailwind
+    - Material UI
+    - Cypress
+    - Jest
     - Cucumber
-    - Selenium
 
 work:
-  - id: bcg
-    company: Boston Consulting Group
-    position: Lead Engineer (Full-stack)
-    duration: April 2016 - Present
+  - id: superhuman
+    company: Superhuman (Grammarly)
+    position: Web Engineer (Contract)
+    duration: March 2026 - Present
     responsibilities:
       - >-
-        Worked with partners and clients to develop a wide variety of software
-        solutions from innovation prototypes through to production.
+        Full-stack development across grammarly.com and superhuman.com —
+        identity and auth services, Next.js components, and a shared CSS
+        design kit.
       - >-
-        Engineered and integrated full-stack solutions for content management
-        systems, analytics charting, IoT and AI training interfaces.
+        Built Contentful integrations and browser-extension features for the
+        combined Grammarly / Superhuman platform.
       - >-
-        Teamed with designers and product managers to build responsive,
-        test-driven web applications.
+        Integrated AI-assisted development with Claude across the workflow,
+        from rapid prototyping through production code.
     technologies:
+      - TypeScript
+      - React
+      - Next.js
+      - Contentful
+      - Claude
+
+  - id: jubilee
+    company: Jubilee Media
+    position: Full-Stack Software Engineer (Contract)
+    duration: February 2025 - Present
+    responsibilities:
+      - >-
+        Built the Node/TypeScript backend API and task workers — Express,
+        Postgres, GraphQL, Redis, Firebase — with a full test suite, serving
+        120k+ users.
+      - >-
+        Ran CI/CD with GitHub Actions: automated tests, SonarQube analysis,
+        AWS EC2 environments, and Android/iOS marketplace deployments.
+      - >-
+        Helped build the React Native (Expo) mobile app with Sendbird chat
+        integration.
+      - >-
+        Led standups, mentored developers, wrote epics and tasks in Linear,
+        and drove code review.
+      - >-
+        Built the analytics and admin dashboards with Mixpanel, OneSignal and
+        Retool.
+    technologies:
+      - TypeScript
       - Node.js
+      - Express
+      - PostgreSQL
+      - GraphQL
+      - Redis
+      - Firebase
+      - React Native
+      - AWS
+
+  - id: pacaso
+    company: Pacaso
+    position: Senior Web Developer
+    duration: November 2023 - December 2024
+    responsibilities:
+      - >-
+        Developed the Next.js/TypeScript web application integrated with
+        Contentful, Google Maps and a Java API — components built in
+        Storybook, styled with Tailwind and SCSS.
+      - >-
+        Created and maintained the admin dashboard with React, Google
+        Analytics, Recharts and Material UI.
+      - >-
+        Owned the Cypress suite, Jest unit tests and GitLab CI/CD workflows.
+    technologies:
+      - Next.js
       - React
       - TypeScript
-      - AWS
+      - Contentful
+      - Tailwind
+      - Cypress
+      - Jest
+
+  - id: bcgx
+    company: BCG X
+    position: Lead Software Engineer
+    duration: December 2020 - August 2023
+    responsibilities:
+      - >-
+        Designed and shipped over a dozen full-stack web and mobile
+        applications from concept to production for FinTech, health care and
+        retail clients.
+      - >-
+        Built AI integration tooling and training platforms with Python and
+        Jupyter.
+      - >-
+        Led behaviour-driven development across projects — wrote acceptance
+        criteria and integrated test suites with Cypress, Cucumber/Gherkin
+        and Selenium.
+      - >-
+        Mentored and managed junior engineers across several offices through
+        pair programming and performance reviews.
+    technologies:
+      - React
+      - Node.js
+      - Next.js
+      - Angular
+      - Vue
       - Python
-      - D3
+      - Material UI
+      - Tailwind
+      - Strapi
+      - Contentful
+
+  - id: bcgdv
+    company: BCG Digital Ventures
+    position: Senior Full-Stack Engineer
+    duration: May 2016 - December 2020
+    responsibilities:
+      - >-
+        Built venture products from zero with Node, Docker, Rancher, MongoDB,
+        Webpack, Vue (Nuxt), Angular, React and Ionic, under behaviour-driven
+        development and CI/CD.
+    technologies:
+      - Node.js
+      - Vue
+      - Angular
+      - React
+      - MongoDB
+      - Docker
+      - Cucumber
+
+  - id: velocify
+    company: Velocify
+    position: Senior UX Engineer
+    duration: July 2014 - May 2016
+    responsibilities:
+      - >-
+        Developed the responsive, legacy-browser-compatible web platform with
+        jQuery and Knockout, then led the product's transition to Angular.
+      - >-
+        Mentored junior engineers and interns through pair programming and
+        performance reviews.
+    technologies:
+      - JavaScript
+      - Angular
+      - Knockout
+
+  - id: sony
+    company: Sony Network Entertainment
+    position: Web Applications Developer
+    duration: May 2013 - June 2014
+    responsibilities:
+      - >-
+        Developed an internal full-stack dashboard and analytics suite with
+        PHP and Backbone.js.
+    technologies:
+      - PHP
+      - Backbone.js
+
+  - id: ea
+    company: Electronic Arts
+    position: Senior Web Developer
+    duration: June 2009 - May 2013
+    responsibilities:
+      - >-
+        Developed and supported EA.com and numerous game project portals with
+        PHP, HTML5, CSS, JavaScript/jQuery and Flash.
+      - >-
+        Built EA's custom Flash video player with HTML5 support for modern
+        browsers; assisted Origin storefront development with Brightcove
+        integration.
+      - >-
+        Supported and managed front-end components for the internal CMS.
+    technologies:
+      - PHP
+      - JavaScript
+      - HTML5
+      - CSS
+      - Flash
+
+  - id: animax
+    company: Animax Entertainment
+    position: Senior Developer
+    duration: September 2008 - June 2009
+    responsibilities:
+      - >-
+        Conceptualized and developed Flash games and portals for Ty,
+        including Beanie Babies and Ty Girlz.
+    technologies:
+      - Flash
+      - ActionScript
+
+  - id: gsn
+    company: GSN
+    position: Senior Software Developer
+    duration: June 2007 - July 2008
+    responsibilities:
+      - >-
+        Developed and maintained GSN.com server and client side — LAMP and
+        Flash/Flex ActionScript — including the Bingo America
+        play-along-live-at-home game and branded video players.
+    technologies:
+      - PHP
+      - MySQL
+      - Flash
+      - ActionScript
 
 education:
   - id: lmu
     institution: Loyola Marymount University
     year: "2000"
     study: B.A. Film Production / Computer Science (minor)
-  - id: smc
-    institution: Santa Monica College
-    year: "2005"
-    study: Java Server Pages
 
-certifications:
-  - Meta Front-end Development (In-progress)
-  - Google Cyber Security (In-progress)
-  - Google Data Analytics (In-progress)
+certifications: []
 
 references:
   private: references

@@ -107,3 +107,32 @@ test("emits absolute share metadata, never localhost", async ({ request }) => {
   expect(ogImage).not.toContain("localhost")
   expect(ogImage!.startsWith("https://hynding.github.io")).toBe(true)
 })
+
+test("publishes machine-readable surfaces for crawlers and agents", async ({ request }) => {
+  const cv = await (await request.get("/resume.json")).json()
+  expect(cv.basics.name).toBe("Steve Hynding")
+  expect(cv.$schema).toContain("jsonresume")
+  // Built from the public model only — the fixture's private values must
+  // never reach it, in either raw or placeholder form.
+  const body = JSON.stringify(cv)
+  expect(body).not.toContain("steve.hynding@example.com")
+  expect(body).not.toContain("A Referee")
+  expect(body).not.toMatch(/available on request/i)
+
+  expect((await request.get("/robots.txt")).ok()).toBe(true)
+  expect((await request.get("/sitemap.xml")).ok()).toBe(true)
+  expect((await request.get("/llms.txt")).ok()).toBe(true)
+})
+
+test("embeds Person structured data without leaking gated fields", async ({ request }) => {
+  const html = await (await request.get("/")).text()
+  const match = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)
+  expect(match).not.toBeNull()
+  const ld = JSON.parse(match![1])
+  expect(ld["@type"]).toBe("Person")
+  expect(ld.name).toBe("Steve Hynding")
+  // Locked fields are omitted, not placeholder-filled.
+  expect(ld.email).toBeUndefined()
+  expect(ld.telephone).toBeUndefined()
+  expect(JSON.stringify(ld)).not.toMatch(/available on request/i)
+})

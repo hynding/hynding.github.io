@@ -36,13 +36,15 @@ export function AtsTemplate({ resume }: { resume: Resume }) {
         </ul>
       </Section>
 
-      <Section title="Certifications">
-        <ul className="list-disc space-y-1 pl-5">
-          {resume.certifications.map((item, index) => (
-            <li key={`${index}-${item}`}>{item}</li>
-          ))}
-        </ul>
-      </Section>
+      {resume.certifications.length > 0 ? (
+        <Section title="Certifications">
+          <ul className="list-disc space-y-1 pl-5">
+            {resume.certifications.map((item, index) => (
+              <li key={`${index}-${item}`}>{item}</li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
 
       <Section title="References">
         <References references={resume.references} />
