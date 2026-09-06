@@ -14,15 +14,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   title: "Steve Hynding — Lead Full-Stack Engineer",
   description:
-    "Resume and portfolio of Steve Hynding, Lead Full-Stack Engineer — a decade at " +
-    "Boston Consulting Group building React, TypeScript and Node.js products from prototype to production.",
+    "Resume and portfolio of Steve Hynding, Lead Full-Stack Engineer in Los Angeles — two decades shipping web products for EA, Sony, BCG X and venture clients in TypeScript, React, Node and Next.js.",
   openGraph: {
     type: "website",
     url: SITE,
     title: "Steve Hynding — Lead Full-Stack Engineer",
     description:
-      "Resume and portfolio of Steve Hynding, Lead Full-Stack Engineer — a decade at " +
-      "Boston Consulting Group building React, TypeScript and Node.js products from prototype to production.",
+      "Resume and portfolio of Steve Hynding, Lead Full-Stack Engineer in Los Angeles — two decades shipping web products for EA, Sony, BCG X and venture clients in TypeScript, React, Node and Next.js.",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Steve Hynding" }],
   },
   twitter: { card: "summary_large_image" },

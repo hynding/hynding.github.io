@@ -77,3 +77,37 @@ describe("jsonResume", () => {
     expect(entry.position).toBe("Lead Full-Stack Engineer")
   })
 })
+
+describe("parseDuration with abbreviated months", () => {
+  it("parses LinkedIn-style short month names", () => {
+    expect(parseDuration("Mar 2026 - Present")).toEqual({ startDate: "2026-03" })
+    expect(parseDuration("Feb 2025 - Dec 2025")).toEqual({ startDate: "2025-02", endDate: "2025-12" })
+  })
+})
+
+describe("jsonResume with location and profiles", () => {
+  const located = {
+    ...resume,
+    basics: {
+      ...resume.basics,
+      location: "Los Angeles, CA",
+      profiles: [
+        { id: "linkedin", network: "LinkedIn", url: "https://www.linkedin.com/in/stevehynding" },
+      ],
+    },
+  } as unknown as Resume
+
+  it("emits JSON Resume location and profiles", () => {
+    const cv = jsonResume(located)
+    expect(cv.basics.location).toEqual({ city: "Los Angeles", region: "CA" })
+    expect(cv.basics.profiles).toEqual([
+      { network: "LinkedIn", url: "https://www.linkedin.com/in/stevehynding" },
+    ])
+  })
+
+  it("omits both when absent", () => {
+    const cv = jsonResume(resume)
+    expect(cv.basics.location).toBeUndefined()
+    expect(cv.basics.profiles).toBeUndefined()
+  })
+})

@@ -7,9 +7,16 @@ export function Header({ basics }: { basics: Resume["basics"] }) {
       <h1 className="text-3xl font-semibold tracking-tight">{basics.name}</h1>
       <p className="text-[var(--muted)]">{basics.role}</p>
       <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+        {basics.location ? <li>{basics.location}</li> : null}
         <li><PrivateValue field={basics.email} /></li>
         <li><PrivateValue field={basics.phone} /></li>
-        <li><a href={basics.website} className="text-[var(--accent)]">{basics.website}</a></li>
+        {(basics.profiles ?? []).map((profile) => (
+          <li key={profile.id}>
+            <a href={profile.url} className="text-[var(--accent)]" rel="me">
+              {profile.network}
+            </a>
+          </li>
+        ))}
       </ul>
     </header>
   )

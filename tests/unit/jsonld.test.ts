@@ -64,3 +64,32 @@ describe("personJsonLd", () => {
     expect(personJsonLd(gated).worksFor).toBeUndefined()
   })
 })
+
+describe("personJsonLd with location and profiles", () => {
+  const located = {
+    ...locked,
+    basics: {
+      ...locked.basics,
+      location: "Los Angeles, CA",
+      profiles: [
+        { id: "linkedin", network: "LinkedIn", url: "https://www.linkedin.com/in/stevehynding" },
+        { id: "github", network: "GitHub", url: "https://github.com/hynding" },
+      ],
+    },
+  } as unknown as Resume
+
+  it("emits sameAs from profiles and address from location", () => {
+    const ld = personJsonLd(located)
+    expect(ld.sameAs).toEqual([
+      "https://www.linkedin.com/in/stevehynding",
+      "https://github.com/hynding",
+    ])
+    expect(ld.address).toBe("Los Angeles, CA")
+  })
+
+  it("omits sameAs and address when absent", () => {
+    const ld = personJsonLd(locked)
+    expect(ld.sameAs).toBeUndefined()
+    expect(ld.address).toBeUndefined()
+  })
+})

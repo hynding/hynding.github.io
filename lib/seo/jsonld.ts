@@ -23,6 +23,11 @@ export function personJsonLd(resume: Resume): Record<string, unknown> {
     knowsAbout: basics.skills,
   }
 
+  if (basics.location) person.address = basics.location
+  if (basics.profiles && basics.profiles.length > 0) {
+    person.sameAs = basics.profiles.map((profile) => profile.url)
+  }
+
   if (!isPrivateMarker(basics.email)) person.email = `mailto:${basics.email}`
   if (!isPrivateMarker(basics.phone)) person.telephone = basics.phone
 

@@ -126,7 +126,7 @@ test("publishes machine-readable surfaces for crawlers and agents", async ({ req
 
 test("embeds Person structured data without leaking gated fields", async ({ request }) => {
   const html = await (await request.get("/")).text()
-  const match = /<script type="application\/ld\+json">(.*?)<\/script>/s.exec(html)
+  const match = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)
   expect(match).not.toBeNull()
   const ld = JSON.parse(match![1])
   expect(ld["@type"]).toBe("Person")
