@@ -47,15 +47,26 @@ basics:
 
 work:
   - id: superhuman
-    company: Superhuman
+    company: Superhuman (Grammarly)
     position: Web Engineer (Contract)
     duration: March 2026 - Present
     responsibilities:
       - >-
-        Contract web engineering for Superhuman, the AI-native email client.
+        Full-stack development across grammarly.com and superhuman.com —
+        identity and auth services, Next.js components, and a shared CSS
+        design kit.
+      - >-
+        Built Contentful integrations and browser-extension features for the
+        combined Grammarly / Superhuman platform.
+      - >-
+        Integrated AI-assisted development with Claude across the workflow,
+        from rapid prototyping through production code.
     technologies:
       - TypeScript
       - React
+      - Next.js
+      - Contentful
+      - Claude
 
   - id: jubilee
     company: Jubilee Media
