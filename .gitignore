@@ -8,3 +8,4 @@ public/vault
 test-results
 playwright-report
 tsconfig.tsbuildinfo
+public/resume.json

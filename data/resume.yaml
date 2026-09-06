@@ -1,9 +1,13 @@
 basics:
   name: Steve Hynding
-  role: Full-stack Engineer / UX Specialist
+  role: Lead Full-Stack Engineer
   website: https://hynding.github.io
   summary: >-
-    Experienced full-stack engineer with a strong background in UX design.
+    Lead full-stack engineer with a decade at Boston Consulting Group taking
+    client products from innovation prototype to production — content
+    management platforms, analytics and data visualization, IoT and AI
+    training interfaces. Pairs engineering depth with hands-on UX craft on
+    responsive, test-driven web applications.
   email:
     private: contact
     public: Available on request
@@ -54,15 +58,7 @@ education:
     institution: Loyola Marymount University
     year: "2000"
     study: B.A. Film Production / Computer Science (minor)
-  - id: smc
-    institution: Santa Monica College
-    year: "2005"
-    study: Java Server Pages
-
-certifications:
-  - Meta Front-end Development (In-progress)
-  - Google Cyber Security (In-progress)
-  - Google Data Analytics (In-progress)
+certifications: []
 
 references:
   private: references

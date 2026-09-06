@@ -2,10 +2,12 @@
   "name": "hynding-site",
   "version": "1.0.0",
   "private": true,
-  "engines": { "node": ">=22.12" },
+  "engines": {
+    "node": ">=22.12"
+  },
   "scripts": {
     "dev": "next dev",
-    "prebuild": "tsx scripts/build-vault.ts",
+    "prebuild": "tsx scripts/build-vault.ts && tsx scripts/build-resume-json.ts",
     "build": "next build",
     "vault:init": "tsx scripts/build-vault.ts --init",
     "test": "vitest run",

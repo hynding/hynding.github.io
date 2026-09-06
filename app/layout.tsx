@@ -1,4 +1,6 @@
 import type { Metadata } from "next"
+import { loadResume } from "@/lib/resume/load"
+import { jsonLdScript } from "@/lib/seo/jsonld"
 import { PREPAINT_SCRIPT, themeCss } from "@/lib/theme/themes"
 import "./globals.css"
 
@@ -9,13 +11,18 @@ export const metadata: Metadata = {
   // succeeds, the site looks correct, and every Slack and LinkedIn preview is
   // broken. Verified by spike on 2026-09-03.
   metadataBase: new URL(SITE),
-  title: "Steve Hynding — Full-stack Engineer",
-  description: "Resume and portfolio of Steve Hynding, full-stack engineer and UX specialist.",
+  alternates: { canonical: "/" },
+  title: "Steve Hynding — Lead Full-Stack Engineer",
+  description:
+    "Resume and portfolio of Steve Hynding, Lead Full-Stack Engineer — a decade at " +
+    "Boston Consulting Group building React, TypeScript and Node.js products from prototype to production.",
   openGraph: {
     type: "website",
     url: SITE,
-    title: "Steve Hynding — Full-stack Engineer",
-    description: "Resume and portfolio of Steve Hynding, full-stack engineer and UX specialist.",
+    title: "Steve Hynding — Lead Full-Stack Engineer",
+    description:
+      "Resume and portfolio of Steve Hynding, Lead Full-Stack Engineer — a decade at " +
+      "Boston Consulting Group building React, TypeScript and Node.js products from prototype to production.",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "Steve Hynding" }],
   },
   twitter: { card: "summary_large_image" },
@@ -27,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <style dangerouslySetInnerHTML={{ __html: themeCss() }} />
         <script dangerouslySetInnerHTML={{ __html: PREPAINT_SCRIPT }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(loadResume()) }} />
       </head>
       <body>{children}</body>
     </html>
